@@ -1,10 +1,11 @@
 package com.api.model;
 
-import com.company.Language;
-import com.company.Type;
+
+import netscape.javascript.JSObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "template")
@@ -21,21 +22,18 @@ public class Template {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    private Long id;
 
-    @NotBlank
     private String content;
 
-    @NotBlank
     private int numberOfUnknowns;
 
-    @NotBlank
     private int templateType;
 
     private boolean language;
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
@@ -50,7 +48,8 @@ public class Template {
     public void setLanguage(boolean language) { this.language = language; }
 
     public String toString() {
-        return String.format("{\"id\":%d\"content\":%s,\"numberOfUnknowns\":%d,\"templateType\":%d,\"language\":%b}",
+
+        return String.format("{\"id\":%d,\"content\":\"%s\",\"numberOfUnknowns\":%d,\"templateType\":%d,\"language\":%b}",
                 id, content, numberOfUnknowns, templateType, language);
     }
 }
