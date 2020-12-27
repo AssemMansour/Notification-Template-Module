@@ -2,8 +2,6 @@ package lap;
 
 import java.sql.*;
 import java.util.Scanner;
-//@Repository ("fakeDao")
-
 public class Templatedataaccesslayer  implements TemplateDao {
     Connection connection = null;
     @Override
@@ -18,7 +16,7 @@ public class Templatedataaccesslayer  implements TemplateDao {
     @Override
     public void createtemplate(Template t1) throws SQLException {
         Statement st=connection.createStatement();
-        ResultSet r1=st.executeQuery("insert into Notification (content,numberofunknowns,typpe,languagee,subjecte) values ("+"'"+t1.getContent()+"',"+"'"+t1.getNumberofunknowns()+"',"+"'"+t1.getType()+"',"+"'"+t1.getLanguage()+"',"+"'"+t1.getSubject()+"')");
+        ResultSet r1=st.executeQuery("insert into Notification (content,numberofunknowns,typpe,languagee,subjecte) values ("+"'"+t1.getContent()+"',"+"'"+t1.getNumberOfUnknowns()+"',"+"'"+t1.getType()+"',"+"'"+t1.getLanguage()+"',"+"'"+t1.getSubject()+"')");
     }
     @Override
     public void readtemplate(int id) throws SQLException {

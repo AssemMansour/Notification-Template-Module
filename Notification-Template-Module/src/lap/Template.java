@@ -1,6 +1,6 @@
 package lap;
 
-enum language
+enum Language
 {
     ARABIC,
     ENGLISH
@@ -16,13 +16,14 @@ enum Type
 }
 public class Template {
     String content;
-    int numberofunknowns;
-    language Language;
+    int numberOfUnknowns;
+    lap.Language Language;
     Type type;
+    Notification toSendQueue;
 
-    public Template(String content, int numberofunknowns, language language, Type type, String subject) {
+    public Template(String content, int numberofunknowns, lap.Language language, Type type, String subject) {
         this.content = content;
-        this.numberofunknowns = numberofunknowns;
+        this.numberOfUnknowns = numberofunknowns;
         Language = language;
         this.type = type;
         this.subject = subject;
@@ -34,22 +35,22 @@ public class Template {
         return subject;
     }
 
-
     public String getContent() {
         return content;
     }
 
-    public int getNumberofunknowns() {
-        return numberofunknowns;
+    public int getNumberOfUnknowns() {
+        return numberOfUnknowns;
     }
 
-    public language getLanguage() {
+    public lap.Language getLanguage() {
         return Language;
     }
 
     public Type getType() {
         return type;
     }
+
     public static Type processType(Integer choice) {
         switch (choice) {
             case (1):
