@@ -1,6 +1,6 @@
 package com.api.controller;
 
-import com.company.Template;
+import com.api.model.Template;
 import com.api.exception.TemplateNotFoundException;
 import com.api.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class TemplateController {
     TemplateRepository templateRepository;
 
     @GetMapping("/templates")
-    public List<Template> getAllTemplates() {
+    public @ResponseBody List<Template> getAllTemplates() {
         return templateRepository.findAll();
     }
 

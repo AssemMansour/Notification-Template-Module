@@ -1,6 +1,6 @@
 package com.api;
 
-import com.company.Template;
+import com.api.model.Template;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.company;
+package com.api.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -7,7 +7,9 @@ import javax.validation.constraints.NotBlank;
 @Table(name = "template")
 public class Template {
 
-    public Template(String content, int numberOfUnknowns, Type templateType, Language language) {
+    public Template(){}
+
+    public Template(String content, int numberOfUnknowns, int templateType, int language) {
         this.content = content;
         this.numberOfUnknowns = numberOfUnknowns;
         this.templateType = templateType;
@@ -25,14 +27,9 @@ public class Template {
     private int numberOfUnknowns;
 
     @NotBlank
-    @Enumerated(EnumType.ORDINAL)
-    private Type templateType;
+    private int templateType;
 
-    @Enumerated(EnumType.ORDINAL)
-    private Language language;
-
-    @Transient
-    private Notification toSendQueue;
+    private int language;
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -43,12 +40,9 @@ public class Template {
     public int getNumberOfUnknowns() { return numberOfUnknowns; }
     public void setNumberOfUnknowns(int numberOfUnknowns) { this.numberOfUnknowns = numberOfUnknowns; }
 
-    public Type getTemplateType() { return templateType; }
-    public void setTemplateType(Type templateType) { this.templateType = templateType; }
+    public int getTemplateType() { return templateType; }
+    public void setTemplateType(int templateType) { this.templateType = templateType; }
 
-    public Language getLanguage() { return language; }
-    public void setLanguage(Language language) { this.language = language; }
-
-    public Notification getToSendQueue() { return toSendQueue; }
-    public void setToSendQueue(Notification toSendQueue) { this.toSendQueue = toSendQueue; }
+    public int getLanguage() { return language; }
+    public void setLanguage(int language) { this.language = language; }
 }
