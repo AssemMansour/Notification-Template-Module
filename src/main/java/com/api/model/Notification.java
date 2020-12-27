@@ -31,4 +31,10 @@ public class Notification {
 
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+
+    public String toString() {
+
+        return String.format("{\"id\":%d,\"content\":\"%s\",\"sender\":%s,\"receiver\":%s}",
+                id, content, sender, receiver);
+    }
 }
