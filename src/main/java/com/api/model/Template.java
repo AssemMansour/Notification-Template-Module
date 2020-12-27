@@ -1,5 +1,8 @@
 package com.api.model;
 
+import com.company.Language;
+import com.company.Type;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
@@ -9,7 +12,7 @@ public class Template {
 
     public Template(){}
 
-    public Template(String content, int numberOfUnknowns, int templateType, int language) {
+    public Template(String content, int numberOfUnknowns, int templateType, boolean language) {
         this.content = content;
         this.numberOfUnknowns = numberOfUnknowns;
         this.templateType = templateType;
@@ -29,7 +32,7 @@ public class Template {
     @NotBlank
     private int templateType;
 
-    private int language;
+    private boolean language;
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -43,6 +46,11 @@ public class Template {
     public int getTemplateType() { return templateType; }
     public void setTemplateType(int templateType) { this.templateType = templateType; }
 
-    public int getLanguage() { return language; }
-    public void setLanguage(int language) { this.language = language; }
+    public boolean getLanguage() { return language; }
+    public void setLanguage(boolean language) { this.language = language; }
+
+    public String toString() {
+        return String.format("{\"id\":%d\"content\":%s,\"numberOfUnknowns\":%d,\"templateType\":%d,\"language\":%b}",
+                id, content, numberOfUnknowns, templateType, language);
+    }
 }

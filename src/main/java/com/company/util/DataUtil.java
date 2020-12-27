@@ -5,10 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -20,35 +17,139 @@ public class DataUtil {
 
     private DataUtil(){}
 
-    private static String url = "http://localhost:8080/";
+    private static final String URL = "http://localhost:8080/";
+    private static final String DIRECTORY = "templates/";
 
 
    public static ArrayList<Template> viewTemplates() {
-        String jsonResponse = getJsonResponse(url, "GET");
+        String jsonResponse = getJsonResponse();
         return getSearchResults(jsonResponse);
+    }
+
+    public static void updateTemplate(Template template) {
+        int id = template.getId();
+
+        HttpURLConnection connection = getHttpURLConnection(URL + DIRECTORY + id, "PUT");
+
+        if (connection != null) {
+
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+
+            connection.setDoOutput(true);
+            OutputStreamWriter out;
+
+            try {
+                out = new OutputStreamWriter(connection.getOutputStream());
+                out.write(template.toString());
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 
     }
 
-    public static void updateTemplate() {}
+    public static void deleteTemplate(Template template) {
+        int id = template.getId();
 
-    public static void deleteTemplate() {}
+        URL url = createUrl(URL + DIRECTORY + id);
+        HttpURLConnection connection;
 
-    public static void createTemplate(Template template) {}
+        if (url == null){
+            System.out.println("Couldn't find element with id:" + id);
+            return;
+        }
+
+        try {
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestProperty(
+                    "Content-Type", "application/x-www-form-urlencoded" );
+            connection.setRequestMethod("DELETE");
+            connection.connect();
+        } catch (IOException e) {
+            System.out.println("Couldn't find element with id:" + id);
+        }
+
+    }
+
+    public static void createTemplate(Template template) {
+
+        HttpURLConnection connection = getHttpURLConnection(URL + DIRECTORY, "PUT");
+
+        if (connection != null) {
+
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Accept", "application/json");
+
+            connection.setDoOutput(true);
+            OutputStreamWriter out;
+
+            try {
+                out = new OutputStreamWriter(connection.getOutputStream());
+                out.write(template.toString());
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public static ArrayList<Template> getSearchResults(String jsonResponse) {
+
+       ArrayList<Template> results = new ArrayList<>();
 
         if (jsonResponse.isEmpty())
             return null;
 
-        return null;
+        try {
+            JSONArray jsonArray = new JSONArray(jsonResponse);
+            int length = jsonArray.length();
+
+            for (int i = 0; i < length; i++) {
+                JSONObject result = jsonArray.getJSONObject(i);
+
+                int id = result.getInt("id");
+                String content = result.getString("content");
+                int numberOfUnknowns = result.getInt("numberOfUnknowns");
+                int templateType = result.getInt("templateType");
+                boolean language = result.getBoolean("language");
+
+                Template template = new Template(content, numberOfUnknowns, templateType, language);
+                template.setId(id);
+
+                results.add(template);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return results;
     }
 
+    private static String getJsonResponse() {
 
-    private static String getJsonResponse(String urlString, String requestMethod) {
+        HttpURLConnection urlConnection;
 
+        try {
+            urlConnection = getHttpURLConnection("http://localhost:8080/templates/", "GET");
+
+            if (urlConnection != null && urlConnection.getResponseCode() == 200)
+                return readFromStream(urlConnection.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    private static HttpURLConnection getHttpURLConnection(String urlString, String requestMethod) {
         URL url = createUrl(urlString);
         if (url == null)
-            return "";
+            return null;
 
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -57,7 +158,7 @@ public class DataUtil {
             connection.connect();
 
             if (connection.getResponseCode() == 200)
-                return readFromStream(connection.getInputStream());
+                return connection;
 
         } catch (ProtocolException e) {
             System.out.println("Protocol Exception");
@@ -65,12 +166,13 @@ public class DataUtil {
         } catch (IOException e) {
             System.out.println("HttpURLConnection IOException Exception");
         }
-        return "";
+        return null;
+
     }
 
     private static URL createUrl(String urlString) {
 
-        URL url = null;
+        URL url;
 
         try {
             url = new URL(urlString);
