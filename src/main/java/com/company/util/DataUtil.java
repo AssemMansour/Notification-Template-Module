@@ -1,6 +1,7 @@
 package com.company.util;
 
 import com.api.model.Template;
+import com.company.Type;
 import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +22,7 @@ public class DataUtil {
 
 
     public static ArrayList<Template> getAllTemplates() {
-        String jsonResponse = getJsonResponse();
+        String jsonResponse = getJsonResponse(SERVICE_URL);
         return getSearchResults(jsonResponse);
     }
 
@@ -39,6 +40,40 @@ public class DataUtil {
         return handleWriteRequest(template, SERVICE_URL + id, "DELETE");
     }
 
+    public static Template getTemplateById(Long id) {
+        String jsonResponse = getJsonResponse(SERVICE_URL + id);
+        return getSearchResults(jsonResponse).get(0);
+    }
+
+    public static Type processType(Integer choice) {
+        switch (choice) {
+            case (1):
+                return Type.values()[0];
+            case (2):
+                return Type.values()[1];
+            case (3):
+                return Type.values()[2];
+            case (4):
+                return Type.values()[3];
+            case (5):
+                return Type.values()[4];
+            case (6):
+                return Type.values()[5];
+        }
+        return Type.values()[0];
+    }
+
+    public static void print (Template template)
+    {
+        System.out.println("content:"+template.getContent());
+        System.out.println("number of unknowns:" +template.getNumberOfUnknowns());
+        Type t1=processType(template.getTemplateType());
+        System.out.println("type:"+t1.name());
+        if (template.getLanguage())
+            System.out.println("language: English");
+        else
+            System.out.println("language: Arabic");
+    }
 
     private static ArrayList<Template> getSearchResults(String jsonResponse) {
 
@@ -73,9 +108,9 @@ public class DataUtil {
         return results;
     }
 
-    private static String getJsonResponse() {
+    private static String getJsonResponse(String urlString) {
 
-        URL url = createUrl(SERVICE_URL);
+        URL url = createUrl(urlString);
         if (url == null)
             return null;
 
@@ -160,5 +195,7 @@ public class DataUtil {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+
 
 }

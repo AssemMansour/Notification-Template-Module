@@ -12,7 +12,7 @@ public class Main {
         int choice;
         Scanner scanner = new Scanner(System.in);
 
-        Template t1=new Template();
+        Template t1= new Template();
         ArrayList<Template>t2= new ArrayList<Template>();
         String content;
         int numberOfUnknowns,templateType;
@@ -24,9 +24,9 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    System.out.println("enter content of template");
+                    System.out.println("Enter ontent of template");
                     content=scanner.nextLine();
-                    System.out.println("enter numberOfUnknowns");
+                    System.out.println("Enter number of unknowns");
                     numberOfUnknowns=scanner.nextInt();
                     System.out.println("choose one of the following templates /n" +"1-PASSWORD/n"+"2-VERIFICATION/n"+"3-LATE/n"+"4-ORDERS/n"+"5-ANNOUNCEMENT/n"+"5-PROMOTION/n");
                     templateType=scanner.nextInt();
@@ -53,11 +53,11 @@ public class Main {
                     for (int i=0;i<t2.size();i++)
                     {
                         t1=t2.get(i);
-                        t1.print();
+                        DataUtil.print(t1);
                     }
                     break;
                 case 3:
-                    DataUtil.updateTemplate();
+                    //DataUtil.updateTemplate();
                     break;
                 case 4:
                    // DataUtil.deleteTemplate();
