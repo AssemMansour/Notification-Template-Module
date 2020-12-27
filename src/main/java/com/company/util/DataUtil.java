@@ -14,105 +14,35 @@ import java.util.ArrayList;
 
 public class DataUtil {
 
-    private DataUtil(){}
+    private DataUtil() {
+    }
 
     private static final String SERVICE_URL = "http://localhost:8080/templates/";
 
 
-   public static ArrayList<Template> viewTemplates() {
+    public static ArrayList<Template> getAllTemplates() {
         String jsonResponse = getJsonResponse();
         return getSearchResults(jsonResponse);
     }
 
+    public static Long createTemplate(Template template) {
+        return handleWriteRequest(template, SERVICE_URL, "POST");
+    }
+
     public static Long updateTemplate(Template template) {
         Long id = template.getId();
-        try {
-            URL url = new URL(SERVICE_URL + id);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setDoOutput(true);
-            connection.setRequestMethod("PUT");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
-            writer.write(template.toString());
-            writer.close();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder jsonString = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonString.append(line);
-            }
-            reader.close();
-            connection.disconnect();
-            JSONObject object = new JSONObject(jsonString.toString());
-            return object.getLong("id");
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
+        return handleWriteRequest(template, SERVICE_URL + id, "PUT");
     }
 
     public static Long deleteTemplate(Template template) {
         Long id = template.getId();
-
-        try {
-            URL url = new URL(SERVICE_URL + id);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setDoOutput(true);
-            connection.setRequestMethod("DELETE");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
-            writer.write(template.toString());
-            writer.close();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder jsonString = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonString.append(line);
-            }
-            reader.close();
-            connection.disconnect();
-            return id;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
+        return handleWriteRequest(template, SERVICE_URL + id, "DELETE");
     }
 
-    public static Long createTemplate(Template template) {
-        try {
-            URL url = new URL(SERVICE_URL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
-            writer.write(template.toString());
-            writer.close();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder jsonString = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonString.append(line);
-            }
-            reader.close();
-            connection.disconnect();
-
-            JSONObject object = new JSONObject(jsonString.toString());
-            return object.getLong("id");
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 
     private static ArrayList<Template> getSearchResults(String jsonResponse) {
 
-       ArrayList<Template> results = new ArrayList<>();
+        ArrayList<Template> results = new ArrayList<>();
 
         if (jsonResponse.isEmpty())
             return null;
@@ -198,6 +128,37 @@ public class DataUtil {
             return "";
         }
         return builder.toString();
+    }
+
+    private static Long handleWriteRequest(Template template, String urlString, String requestMethod) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setDoOutput(true);
+            connection.setRequestMethod(requestMethod);
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
+            writer.write(template.toString());
+            writer.close();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder jsonString = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonString.append(line);
+            }
+            reader.close();
+            connection.disconnect();
+            JSONObject object = new JSONObject(jsonString.toString());
+
+            if (requestMethod.equals("DELETE"))
+                return 0L;
+            else
+                return object.getLong("id");
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 }
