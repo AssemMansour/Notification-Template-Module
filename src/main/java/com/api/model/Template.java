@@ -1,6 +1,7 @@
 package com.api.model;
 
 
+import com.company.Type;
 import netscape.javascript.JSObject;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,5 +52,33 @@ public class Template {
 
         return String.format("{\"id\":%d,\"content\":\"%s\",\"numberOfUnknowns\":%d,\"templateType\":%d,\"language\":%b}",
                 id, content, numberOfUnknowns, templateType, language);
+    }
+    public static Type processType(Integer choice) {
+        switch (choice) {
+            case (1):
+                return Type.values()[0];
+            case (2):
+                return Type.values()[1];
+            case (3):
+                return Type.values()[2];
+            case (4):
+                return Type.values()[3];
+            case (5):
+                return Type.values()[4];
+            case (6):
+                return Type.values()[5];
+        }
+        return Type.values()[0];
+    }
+    public void print ()
+    {
+        System.out.println("content:"+getContent());
+        System.out.println("numberofunknowns:"+getNumberOfUnknowns());
+        Type t1=processType(getTemplateType());
+        System.out.println("type:"+t1.name());
+        if (language)
+         System.out.println("language: English");
+        else
+            System.out.println("language: Arabic");
     }
 }

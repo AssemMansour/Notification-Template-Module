@@ -25,13 +25,13 @@ public class TemplateController {
         return templateRepository.save(template);
     }
 
-    /*
+
     @GetMapping("/templates/{id}")
     public Template getTemplateById(@PathVariable(value = "id") Long id) throws TemplateNotFoundException {
         return templateRepository.findById(id)
                 .orElseThrow(() -> new TemplateNotFoundException(id));
     }
-    */
+
 
     @PutMapping("/templates/{id}")
     public Template update(@PathVariable(value = "id") Long id,
