@@ -19,27 +19,27 @@ public class Main {
         boolean language;
 
         while (true) {
-            System.out.println("1- Create Template\n2- View Templates\n3- Update Template\n4- Delete Template\n5- Exit");
+            System.out.println("1- Create Template\n2- View Templates\n3- Update Template\n4- Delete Template\n5- Send Notification \n6-Exit");
             choice = scanner.nextInt();
 
             switch (choice) {
                 case 1:
-                    System.out.println("Enter ontent of template");
+                    System.out.println("Enter Content of Template");
                     content=scanner.nextLine();
-                    System.out.println("Enter number of unknowns");
+                    System.out.println("Enter Number of Unknowns");
                     numberOfUnknowns=scanner.nextInt();
-                    System.out.println("choose one of the following templates /n" +"1-PASSWORD/n"+"2-VERIFICATION/n"+"3-LATE/n"+"4-ORDERS/n"+"5-ANNOUNCEMENT/n"+"5-PROMOTION/n");
+                    System.out.println("Choose one of the following templates \n" +"1-PASSWORD\n"+"2-VERIFICATION\n"+"3-LATE\n"+"4-ORDERS\n"+"5-ANNOUNCEMENT\n"+"5-PROMOTION\n");
                     templateType=scanner.nextInt();
                     while (templateType>5 || templateType<1)
                     {
-                        System.out.println("choose one of the following templates /n" +"1-PASSWORD/n"+"2-VERIFICATION/n"+"3-LATE/n"+"4-ORDERS/n"+"5-ANNOUNCEMENT/n"+"5-PROMOTION/n");
+                        System.out.println("choose one of the following templates \n" +"1-PASSWORD\n"+"2-VERIFICATIO\n"+"3-LATE\n"+"4-ORDERS\n"+"5-ANNOUNCEMENT\n"+"5-PROMOTION\n");
                         choice=scanner.nextInt();
                     }
-                    System.out.println("choose one of the following language /n"+"1-Arabic/n"+"2-English/n");
+                    System.out.println("Choose one of the following language \n"+"1-Arabic\n"+"2-English\n");
                     choice=scanner.nextInt();
                     while (choice>2 || choice<1)
                     {
-                        System.out.println("choose one of the following language /n"+"1-English/n"+"2-Arabic/n");
+                        System.out.println("Choose one of the following language \n"+"1-English\n"+"2-Arabic\n");
                     }
                     if (choice==1)
                         language=true;
@@ -57,12 +57,21 @@ public class Main {
                     }
                     break;
                 case 3:
-                    //DataUtil.updateTemplate();
+                    System.out.println("Enter Template ID");
+                    Long id;
+                    id=scanner.nextLong();
+                    t1=DataUtil.getTemplateById(id);
+                    DataUtil.updateTemplate(t1);
                     break;
                 case 4:
-                   // DataUtil.deleteTemplate();
+                    System.out.println("Enter Template ID");
+                    id=scanner.nextLong();
+                    t1=DataUtil.getTemplateById(id);
+                    DataUtil.deleteTemplate(t1);
                     break;
                 case 5:
+                    
+                case 6:
                     System.exit(0);
                     break;
                 default:
