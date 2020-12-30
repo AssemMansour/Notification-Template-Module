@@ -1,6 +1,7 @@
 package com.company.util;
 
 import com.api.model.Notification;
+import com.api.model.Template;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,5 +58,13 @@ public class NotificationUtil {
         }
 
         return results;
+    }
+    public static String processTemp(Template template, ArrayList<String> toReplace) {
+        String toBeSent = template.getContent();
+                toBeSent = toBeSent.replaceAll("\\{.*?\\}", "#PH");
+        for (int i = 0; i < template.getNumberOfUnknowns(); i++) {
+            toBeSent = toBeSent.replaceFirst("#PH", toReplace.get(i));
+        }
+        return toBeSent;
     }
 }
