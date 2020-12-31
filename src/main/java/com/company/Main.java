@@ -6,7 +6,6 @@ import com.company.util.NotificationUtil;
 import com.company.util.TemplateUtil;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -14,101 +13,114 @@ public class Main {
 
         int choice;
         Scanner scanner = new Scanner(System.in);
-
-        Template t1 = new Template();
-        ArrayList<Template> t2;
-        String content;
-        int numberOfUnknowns, templateType;
-        boolean language;
+        Template template = new Template();
+        Notification notification;
+        ArrayList<Template> templates;
+        long id;
 
         while (true) {
-            System.out.println("1- Create Template\n2- View Templates\n3- Update Template\n4- Delete Template\n5- Add Notification \n6-View Notifications\n7-Send Next Notifications\n8-Exit\n");
+            System.out.println("\n1- Create Template\n" +
+                    "2- View Templates\n" +
+                    "3- Update Template\n" +
+                    "4- Delete Template\n" +
+                    "5- Add Notification \n" +
+                    "6-View Notifications\n" +
+                    "7-Send Next Notifications\n" +
+                    "8-Exit\n");
+
             choice = scanner.nextInt();
             scanner.nextLine();
+
             switch (choice) {
-                case 1:
-                    t1 = enterTemplateInfo(t1);
-                    TemplateUtil.createTemplate(t1);
+                case 1: // Create Template
+                    template = getTemplateInfo(template);
+                    TemplateUtil.createTemplate(template);
                     break;
-                case 2:
-                    t2 = TemplateUtil.getAllTemplates();
-                    if (t2.size()>0){
-                    for (Template template : t2) {
-                        t1 = template;
-                        TemplateUtil.printTemplateInfo(t1);
-                    }}
-                    else
+                case 2: // View Templates
+                    templates = TemplateUtil.getAllTemplates();
+                    if (templates.size() > 0) {
+                        for (Template t : templates) {
+                            template = t;
+                            TemplateUtil.printTemplateInfo(template);
+                        }
+                    } else
                         System.out.println("NO TEMPLATES");
                     break;
-                case 3:
+                case 3: // Update Template
                     System.out.println("Enter Template ID");
-                    long id;
                     id = scanner.nextLong();
-                    t1 = TemplateUtil.getTemplateById(id);
-                    t1 = enterTemplateInfo(t1);
-                    TemplateUtil.updateTemplate(t1);
+                    template = TemplateUtil.getTemplateById(id);
+                    if (template == null)
+                        System.out.println("Template with id " + id + " doesn't exist");
+                    else {
+                        template = getTemplateInfo(template);
+                        TemplateUtil.updateTemplate(template);
+                    }
                     break;
-                case 4:
+                case 4: // Delete Template
                     System.out.println("Enter Template ID");
                     id = scanner.nextLong();
-                    t1 = TemplateUtil.getTemplateById(id);
-                    if (t1 == null)
+                    template = TemplateUtil.getTemplateById(id);
+                    if (template == null)
                         System.out.println("Template with id " + id + " doesn't exist");
                     else
-                        TemplateUtil.deleteTemplate(t1);
+                        TemplateUtil.deleteTemplate(template);
                     break;
-                case 5:
+                case 5: // Add Notification
                     String sender;
                     String receiver;
+
                     System.out.println("Enter Sender");
-                    sender=scanner.nextLine();
+                    sender = scanner.nextLine();
 
                     System.out.println("Enter Receiver");
-                    receiver=scanner.nextLine();
+                    receiver = scanner.nextLine();
 
                     System.out.println("Enter Template ID");
-                    id=scanner.nextInt();
+                    id = scanner.nextInt();
                     scanner.nextLine();
-                    t1=TemplateUtil.getTemplateById(id);
-                    if (t1==null)
-                    {
+
+                    template = TemplateUtil.getTemplateById(id);
+                    if (template == null) {
                         System.out.println("This Template Not Exist");
                         break;
                     }
-                    int num=t1.getNumberOfUnknowns();
-                    ArrayList< String>replace=new ArrayList<>();
-                    String s1;
+
+                    int num = template.getNumberOfUnknowns();
+                    ArrayList<String> replace = new ArrayList<>();
+                    String unknown;
                     System.out.println("Enter Placeholders");
-                    for (int i=0;i<num;i++)
-                    {
-                     s1=scanner.nextLine();
-                     replace.add(s1);
+                    for (int i = 0; i < num; i++) {
+                        unknown = scanner.nextLine();
+                        replace.add(unknown);
                     }
                     System.out.println("Send by: 1-SMS, 2-E-MAIL");
                     int notificationType = scanner.nextInt();
-                    s1=NotificationUtil.processTemp (t1,replace);
-                    Notification n1=new Notification(sender,receiver,s1, notificationType - 1);
-                    NotificationUtil.createNotification(n1);
+                    unknown = NotificationUtil.processTemp(template, replace);
+                    notification = new Notification(sender, receiver, unknown, notificationType);
+
+                    NotificationUtil.createNotification(notification);
                     break;
-                case 6:
-                    ArrayList<Notification> n2= new ArrayList<>();
-                    n2=NotificationUtil.getAllNotifications();
-                    Notification n3;
-                    if (n2.size()>0){
-                    for (int i=0;i<n2.size();i++)
-                    {
-                        n3=n2.get(i);
-                        System.out.println("Sender: "+n3.getSender());
-                        System.out.println("Receiver: "+n3.getReceiver());
-                        System.out.println("Content: "+n3.getContent());
-                    }}
-                    else
+                case 6: // View Notification
+                    ArrayList<Notification> notifications;
+                    notifications = NotificationUtil.getAllNotifications();
+
+                    if (!notifications.isEmpty()) {
+                        for (Notification n : notifications) {
+                            notification = n;
+                            System.out.println("Sender: " + notification.getSender());
+                            System.out.println("Receiver: " + notification.getReceiver());
+                            System.out.println("Content: " + notification.getContent());
+                            System.out.println("Type: " + NotificationUtil.processType(notification.getNotificationType()).name());
+                        }
+                    } else
                         System.out.println("NO NOTIFICATION");
                     break;
-                case 7:
+                case 7: // Send Next Notification
                     NotificationUtil.sendNextNotifications();
+                    System.out.println("Notification Sent!");
                     break;
-                case 8:
+                case 8: // Exit
                     System.exit(0);
                     break;
                 default:
@@ -120,7 +132,7 @@ public class Main {
 
     }
 
-    private static Template enterTemplateInfo (Template template) {
+    private static Template getTemplateInfo(Template template) {
 
         Scanner scanner = new Scanner(System.in);
         int choice;
@@ -135,13 +147,23 @@ public class Main {
         System.out.println("Enter Number of Unknowns");
         numberOfUnknowns = scanner.nextInt();
         do {
-            System.out.println("Choose one of the following templates \n" + "1-PASSWORD\n" + "2-VERIFICATION\n" + "3-LATE\n" + "4-ORDERS\n" + "5-ANNOUNCEMENT\n" + "5-PROMOTION\n");
+            System.out.println("Choose one of the following templates \n"
+                    + "1-PASSWORD\n"
+                    + "2-VERIFICATION\n"
+                    + "3-LATE\n"
+                    + "4-ORDERS\n"
+                    + "5-ANNOUNCEMENT\n"
+                    + "6-PROMOTION\n");
+
             templateType = scanner.nextInt();
         }
         while (templateType > 5 || templateType < 1);
 
         do {
-            System.out.println("Choose one of the following language \n" + "1-English\n" + "2-Arabic\n");
+            System.out.println("Choose one of the following language \n"
+                    + "1-English\n"
+                    + "2-Arabic\n");
+
             choice = scanner.nextInt();
         }
         while (choice > 2 || choice < 1);

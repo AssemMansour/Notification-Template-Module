@@ -2,6 +2,8 @@ package com.company.util;
 
 import com.api.model.Notification;
 import com.api.model.Template;
+import com.company.NotificationType;
+import com.company.Type;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,40 +18,17 @@ public class NotificationUtil {
 
     private static final String NOTIFICATION_URL = "http://localhost:8080/notifications/";
 
+    public static void createNotification(Notification notification) {
+        DataUtil.handleWriteRequest(notification.toString(), NOTIFICATION_URL, "POST");
+    }
+
+    public static void deleteNextNotification() {
+         DataUtil.handleWriteRequest("", NOTIFICATION_URL, "DELETE");
+    }
 
     public static ArrayList<Notification> getAllNotifications() {
         String jsonResponse = DataUtil.getJsonResponse(NOTIFICATION_URL);
         return getNotificationResults(jsonResponse);
-    }
-
-    public static Long createNotification(Notification notification) {
-        return DataUtil.handleWriteRequest(notification.toString(), NOTIFICATION_URL, "POST");
-    }
-
-    public static void deleteNextNotification() {
-         deleteTop();
-    }
-
-    private static void deleteTop() {
-        URL url = DataUtil.createUrl(NOTIFICATION_URL);
-        if (url == null)
-            return;
-
-        try {
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("DELETE");
-            connection.connect();
-
-            if (connection.getResponseCode() == 200)
-                return;
-
-        } catch (ProtocolException e) {
-            System.out.println("Protocol Exception");
-
-        } catch (IOException e) {
-            System.out.println("HttpURLConnection IOException Exception");
-        }
-
     }
 
     public static ArrayList<Notification> getNotificationResults(String jsonResponse) {
@@ -96,5 +75,15 @@ public class NotificationUtil {
     public static void sendNextNotifications() {
         // Do Sending Action
         NotificationUtil.deleteNextNotification();
+    }
+
+    public static NotificationType processType(Integer choice) {
+        switch (choice) {
+            case (1):
+            default:
+                return NotificationType.values()[0];
+            case (2):
+                return NotificationType.values()[1];
+        }
     }
 }

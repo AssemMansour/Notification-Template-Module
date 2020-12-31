@@ -12,11 +12,8 @@ import java.nio.charset.StandardCharsets;
 public class DataUtil {
     static String getJsonResponse(String urlString) {
 
-        URL url = createUrl(urlString);
-        if (url == null)
-            return null;
-
         try {
+            URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
@@ -35,20 +32,24 @@ public class DataUtil {
         return "";
     }
 
-    static Long handleWriteRequest(String request, String urlString, String requestMethod) {
+    static void handleWriteRequest(String request, String urlString, String requestMethod) {
         try {
             URL url = new URL(urlString);
+
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(requestMethod);
+
+            if (request.isEmpty()) {
+                connection.connect();
+                connection.getResponseCode();
+                return;
+            }
 
             connection.setDoOutput(true);
-            connection.setRequestMethod(requestMethod);
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
-
-            if(!request.isEmpty())
-                writer.write(request);
-
+            writer.write(request);
             writer.close();
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder jsonString = new StringBuilder();
@@ -58,26 +59,10 @@ public class DataUtil {
             }
             reader.close();
             connection.disconnect();
-            return 0L;
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    static URL createUrl(String urlString) {
-
-        URL url;
-
-        try {
-            url = new URL(urlString);
-            return url;
-        } catch (MalformedURLException e) {
-            System.out.println("Malformed URL");
-
-        }
-
-        return null;
     }
 
     private static String readFromStream(InputStream inputStream) {
@@ -91,7 +76,7 @@ public class DataUtil {
             inputStream.close();
 
         } catch (IOException e) {
-            System.out.println("readFromStream IOException");
+            System.out.println("Failed to get Response from Server");
             return "";
         }
         return builder.toString();
