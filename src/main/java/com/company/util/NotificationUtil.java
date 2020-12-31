@@ -6,11 +6,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class NotificationUtil {
 
-    private static final String NOTIFICATION_URL = "http://localhost:8080/notification/";
+    private static final String NOTIFICATION_URL = "http://localhost:8080/notifications/";
 
 
     public static ArrayList<Notification> getAllNotifications() {
@@ -22,11 +26,31 @@ public class NotificationUtil {
         return DataUtil.handleWriteRequest(notification.toString(), NOTIFICATION_URL, "POST");
     }
 
-    public static Long deleteNotification(Notification notification) {
-        Long id = notification.getId();
-        return DataUtil.handleWriteRequest(notification.toString(), NOTIFICATION_URL + id, "DELETE");
+    public static void deleteNextNotification() {
+         deleteTop();
     }
 
+    private static void deleteTop() {
+        URL url = DataUtil.createUrl(NOTIFICATION_URL);
+        if (url == null)
+            return;
+
+        try {
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("DELETE");
+            connection.connect();
+
+            if (connection.getResponseCode() == 200)
+                return;
+
+        } catch (ProtocolException e) {
+            System.out.println("Protocol Exception");
+
+        } catch (IOException e) {
+            System.out.println("HttpURLConnection IOException Exception");
+        }
+
+    }
 
     public static ArrayList<Notification> getNotificationResults(String jsonResponse) {
 
@@ -46,8 +70,9 @@ public class NotificationUtil {
                 String content = result.getString("content");
                 String sender = result.getString("sender");
                 String receiver = result.getString("receiver");
+                int notificationType = result.getInt("notificationType");
 
-                Notification notification  = new Notification(content, sender, receiver);
+                Notification notification  = new Notification(content, sender, receiver, notificationType);
                 notification.setId(id);
 
                 results.add(notification);
@@ -66,5 +91,10 @@ public class NotificationUtil {
             toBeSent = toBeSent.replaceFirst("#PH", toReplace.get(i));
         }
         return toBeSent;
+    }
+
+    public static void sendNextNotifications() {
+        // Do Sending Action
+        NotificationUtil.deleteNextNotification();
     }
 }

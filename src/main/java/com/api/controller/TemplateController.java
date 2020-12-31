@@ -1,6 +1,7 @@
 package com.api.controller;
 
 import com.api.NotificationRepository;
+import com.api.exception.NotificationNotFoundException;
 import com.api.model.Notification;
 import com.api.model.Template;
 import com.api.exception.TemplateNotFoundException;
@@ -66,12 +67,9 @@ public class TemplateController {
     @PostMapping("/notifications")
     public Notification create(@RequestBody Notification notification) { return notificationRepository.save(notification); }
 
-    @DeleteMapping("/notifications/{id}")
-    public ResponseEntity<Notification> deleteNotification(@PathVariable(value = "id") Long id) throws TemplateNotFoundException {
-        Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new TemplateNotFoundException(id));
-
-        notificationRepository.delete(notification);
+    @DeleteMapping("/notifications")
+    public ResponseEntity<Notification> deleteTop() {
+        notificationRepository.deleteTop();
         return ResponseEntity.ok().build();
     }
 

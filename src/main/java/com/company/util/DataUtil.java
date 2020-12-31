@@ -45,7 +45,10 @@ public class DataUtil {
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
-            writer.write(request);
+
+            if(!request.isEmpty())
+                writer.write(request);
+
             writer.close();
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder jsonString = new StringBuilder();
@@ -55,18 +58,14 @@ public class DataUtil {
             }
             reader.close();
             connection.disconnect();
-            JSONObject object = new JSONObject(jsonString.toString());
+            return 0L;
 
-            if (requestMethod.equals("DELETE"))
-                return 0L;
-            else
-                return object.getLong("id");
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private static URL createUrl(String urlString) {
+    static URL createUrl(String urlString) {
 
         URL url;
 

@@ -13,11 +13,15 @@ public class Notification {
     private String sender;
     private String receiver;
     private String content;
+    private int notificationType;
 
-    public Notification(String sender, String receiver, String content) {
+    public Notification(){}
+
+    public Notification(String sender, String receiver, String content, int notificationType) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
+        this.notificationType = notificationType;
     }
 
     public Long getId() { return id; }
@@ -32,9 +36,12 @@ public class Notification {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
+    public int getNotificationType() { return notificationType; }
+    public void setNotificationType(int notificationType) { this.notificationType = notificationType; }
+
     public String toString() {
 
-        return String.format("{\"id\":%d,\"content\":\"%s\",\"sender\":%s,\"receiver\":%s}",
-                id, content, sender, receiver);
+        return String.format("{\"id\":%d,\"sender\":\"%s\",\"receiver\":\"%s\",\"content\":\"%s\",\"notificationType\":%d}",
+                id, sender, receiver, content, notificationType);
     }
 }

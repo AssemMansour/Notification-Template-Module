@@ -40,7 +40,11 @@ public class TemplateUtil {
 
     public static Template getTemplateById(Long id) {
         String jsonResponse = DataUtil.getJsonResponse(SERVICE_URL + id);
-        return getTemplateResults(jsonResponse).get(0);
+
+        if (jsonResponse.isEmpty())
+            return null;
+
+        return getJsonResult(jsonResponse);
     }
 
     public static Type processType(Integer choice) {
@@ -62,14 +66,15 @@ public class TemplateUtil {
     }
 
     public static void printTemplateInfo(Template template) {
+        System.out.println("id:"+ template.getId());
         System.out.println("content:"+ template.getContent());
         System.out.println("number of unknowns:" +template.getNumberOfUnknowns());
         Type t1=processType(template.getTemplateType());
         System.out.println("type:"+t1.name());
         if (template.getLanguage())
-            System.out.println("language: English");
+            System.out.println("language: English\n");
         else
-            System.out.println("language: Arabic");
+            System.out.println("language: Arabic\n");
     }
 
     private static ArrayList<Template> getTemplateResults(String jsonResponse) {
@@ -103,6 +108,26 @@ public class TemplateUtil {
         }
 
         return results;
+    }
+
+    private static Template getJsonResult(String jsonResponse) {
+        JSONObject result = null;
+        try {
+            result = new JSONObject(jsonResponse);
+            Long id = result.getLong("id");
+            String content = result.getString("content");
+            int numberOfUnknowns = result.getInt("numberOfUnknowns");
+            int templateType = result.getInt("templateType");
+            boolean language = result.getBoolean("language");
+
+            Template template = new Template(content, numberOfUnknowns, templateType, language);
+            template.setId(id);
+
+            return template;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
