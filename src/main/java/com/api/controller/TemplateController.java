@@ -96,7 +96,9 @@ public class TemplateController {
         SmsNotification notification = smsRepository.findById(id)
                 .orElseThrow(() -> new NotificationNotFoundException(id));
 
-        notification.setStatus(status);
+        if (status != null)
+            notification.setStatus(status);
+
         return smsRepository.save(notification);
     }
 
@@ -130,7 +132,8 @@ public class TemplateController {
         EmailNotification notification = emailRepository.findById(id)
                 .orElseThrow(() -> new NotificationNotFoundException(id));
 
-        notification.setStatus(status);
+        if (status != null)
+            notification.setStatus(status);
         return emailRepository.save(notification);
     }
 
