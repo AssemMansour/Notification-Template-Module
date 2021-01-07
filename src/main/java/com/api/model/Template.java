@@ -3,8 +3,10 @@ package com.api.model;
 
 import com.api.enums.Language;
 import com.api.enums.TemplateType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "template")
@@ -21,6 +23,7 @@ public class Template {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
     private String content;
@@ -32,6 +35,10 @@ public class Template {
 
     @Enumerated(EnumType.ORDINAL)
     private Language language;
+
+    @OneToMany(mappedBy = "id")
+    @JsonIgnore
+    private Set<Notification> notifications;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

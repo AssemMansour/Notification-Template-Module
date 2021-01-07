@@ -17,7 +17,10 @@ public class Notification {
     private String sender;
     private String receiver;
     private String content;
-    private Long templateId;
+
+    @ManyToOne
+    @JoinColumn(name="template_id", nullable = false)
+    private Template template;
 
     public Notification(){
         status = Status.TO_BE_SENT;
@@ -44,6 +47,6 @@ public class Notification {
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
 
-    public Long getTemplateId() { return templateId; }
-    public void setTemplateId(Long templateId) { this.templateId = templateId; }
+    public Template getTemplate() { return template; }
+    public void setTemplate(Template template) { this.template = template; }
 }

@@ -74,8 +74,10 @@ public class TemplateController {
 
     @PostMapping("/sms_notifications")
     public SmsNotification create(@RequestBody SmsNotification notification) throws TemplateNotFoundException {
-        templateRepository.findById(notification.getTemplateId())
-                .orElseThrow(() -> new TemplateNotFoundException(notification.getTemplateId()));
+
+        if (notification.getTemplate() == null)
+            throw new TemplateNotFoundException(0L);
+
         return smsRepository.save(notification); }
 
     @DeleteMapping("/sms_notifications")
@@ -93,8 +95,9 @@ public class TemplateController {
 
     @PostMapping("/email_notifications")
     public Notification create(@RequestBody EmailNotification notification) throws TemplateNotFoundException {
-        templateRepository.findById(notification.getTemplateId())
-                .orElseThrow(() -> new TemplateNotFoundException(notification.getTemplateId()));
+        if (notification.getTemplate() == null)
+            throw new TemplateNotFoundException(0L);
+
         return emailRepository.save(notification);
     }
 
