@@ -1,11 +1,14 @@
 package com.api.model;
 
 import com.api.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.List;
 
-@MappedSuperclass
-public class Notification {
+@Entity
+public abstract class Notification {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -16,6 +19,10 @@ public class Notification {
 
     private String sender;
     private String receiver;
+
+    @JsonIgnore
+    private String unknowns;
+
     private String content;
 
     @ManyToOne
@@ -24,12 +31,6 @@ public class Notification {
 
     public Notification(){
         status = Status.TO_BE_SENT;
-    }
-
-    public Notification(String sender, String receiver, String content) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.content = content;
     }
 
     public Long getId() { return id; }
@@ -44,9 +45,26 @@ public class Notification {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
+    public String getUnknowns() { return unknowns; }
+    public void setUnknowns(String unknowns) { this.unknowns = unknowns; }
+
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
 
     public Template getTemplate() { return template; }
     public void setTemplate(Template template) { this.template = template; }
+
+    public void prepareContent() {
+        List<String> unknownsList = Arrays.asList(unknowns.split(",", -1));
+        this.content = processTemplate(unknownsList);
+    }
+
+    private String processTemplate(List<String> unknowns) {
+        String content = template.getContent();
+        content = content.replaceAll("\\{.*?\\}", "#PH");
+        for (int i = 0; i < template.getNumberOfUnknowns(); i++) {
+            content = content.replaceFirst("#PH", unknowns.get(i));
+        }
+        return content;
+    }
 }

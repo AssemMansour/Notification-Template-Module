@@ -14,13 +14,6 @@ public class Template {
 
     public Template(){}
 
-    public Template(String content, int numberOfUnknowns, TemplateType templateType, Language language) {
-        this.content = content;
-        this.numberOfUnknowns = numberOfUnknowns;
-        this.templateType = templateType;
-        this.language = language;
-    }
-
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id")

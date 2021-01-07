@@ -1,5 +1,7 @@
 package com.api.controller;
 
+import com.api.enums.Status;
+import com.api.exception.NotificationNotFoundException;
 import com.api.model.EmailNotification;
 import com.api.model.SmsNotification;
 import com.api.repo.EmailRepository;
@@ -78,12 +80,24 @@ public class TemplateController {
         if (notification.getTemplate() == null)
             throw new TemplateNotFoundException(0L);
 
+        notification.prepareContent();
         return smsRepository.save(notification); }
 
     @DeleteMapping("/sms_notifications")
     public ResponseEntity<SmsNotification> clearSmsList() {
         smsRepository.deleteAll();
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/sms_notifications/{id}/{status}")
+    public SmsNotification setSmsStatus(@PathVariable(value = "id") Long id, @PathVariable(value = "status") Status status)
+            throws NotificationNotFoundException {
+
+        SmsNotification notification = smsRepository.findById(id)
+                .orElseThrow(() -> new NotificationNotFoundException(id));
+
+        notification.setStatus(status);
+        return smsRepository.save(notification);
     }
 
     /* Email Notification Requests */
@@ -94,10 +108,12 @@ public class TemplateController {
     }
 
     @PostMapping("/email_notifications")
-    public Notification create(@RequestBody EmailNotification notification) throws TemplateNotFoundException {
+    public Notification create(@RequestBody EmailNotification notification)
+            throws TemplateNotFoundException {
         if (notification.getTemplate() == null)
             throw new TemplateNotFoundException(0L);
 
+        notification.prepareContent();
         return emailRepository.save(notification);
     }
 
@@ -105,6 +121,17 @@ public class TemplateController {
     public ResponseEntity<EmailNotification> clearEmailList() {
         emailRepository.deleteAll();
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/email_notifications/{id}/{status}")
+    public EmailNotification setEmailStatus(@PathVariable(value = "id") Long id, @PathVariable(value = "status") Status status)
+            throws NotificationNotFoundException {
+
+        EmailNotification notification = emailRepository.findById(id)
+                .orElseThrow(() -> new NotificationNotFoundException(id));
+
+        notification.setStatus(status);
+        return emailRepository.save(notification);
     }
 
 }
