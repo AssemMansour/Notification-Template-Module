@@ -1,6 +1,6 @@
-package com.company;
+package com.api.enums;
 
-public enum Type {
+public enum TemplateType {
     PASSWORD,
     VERIFICATION,
     LATE,

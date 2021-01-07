@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EntityScan("com.api.model")
 @ComponentScan("com.api.controller")
-@EnableJpaRepositories("com.api")
+@EnableJpaRepositories("com.api.repo")
 public class NotificationTemplateApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NotificationTemplateApplication.class, args);

@@ -1,27 +1,32 @@
 package com.api.model;
 
+import com.api.enums.Status;
+
 import javax.persistence.*;
 
-@Entity
-@Table(name = "notification")
+@MappedSuperclass
 public class Notification {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
+    @Enumerated(EnumType.ORDINAL)
+    private Status status;
+
     private String sender;
     private String receiver;
     private String content;
-    private int notificationType;
+    private Long templateId;
 
-    public Notification(){}
+    public Notification(){
+        status = Status.TO_BE_SENT;
+    }
 
-    public Notification(String sender, String receiver, String content, int notificationType) {
+    public Notification(String sender, String receiver, String content) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
-        this.notificationType = notificationType;
     }
 
     public Long getId() { return id; }
@@ -36,12 +41,9 @@ public class Notification {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    public int getNotificationType() { return notificationType; }
-    public void setNotificationType(int notificationType) { this.notificationType = notificationType; }
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
 
-    public String toString() {
-
-        return String.format("{\"id\":%d,\"sender\":\"%s\",\"receiver\":\"%s\",\"content\":\"%s\",\"notificationType\":%d}",
-                id, sender, receiver, content, notificationType);
-    }
+    public Long getTemplateId() { return templateId; }
+    public void setTemplateId(Long templateId) { this.templateId = templateId; }
 }

@@ -1,11 +1,13 @@
 package com.api.controller;
 
-import com.api.NotificationRepository;
-import com.api.exception.NotificationNotFoundException;
+import com.api.model.EmailNotification;
+import com.api.model.SmsNotification;
+import com.api.repo.EmailRepository;
+import com.api.repo.SmsRepository;
 import com.api.model.Notification;
 import com.api.model.Template;
 import com.api.exception.TemplateNotFoundException;
-import com.api.TemplateRepository;
+import com.api.repo.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,11 @@ public class TemplateController {
     @Autowired
     TemplateRepository templateRepository;
     @Autowired
-    NotificationRepository notificationRepository;
+    SmsRepository smsRepository;
+    @Autowired
+    EmailRepository emailRepository;
+
+    /* Template Requests */
 
     @GetMapping("/templates")
     public @ResponseBody List<Template> getAllTemplates() {
@@ -59,19 +65,43 @@ public class TemplateController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/notifications")
-    public @ResponseBody List<Notification> getAllNotifications() {
-        return notificationRepository.findAll();
+    /* Sms Notification Requests */
+
+    @GetMapping("/sms_notifications")
+    public @ResponseBody List<SmsNotification> getSmsNotifications() {
+        return smsRepository.findAll();
     }
 
-    @PostMapping("/notifications")
-    public Notification create(@RequestBody Notification notification) { return notificationRepository.save(notification); }
+    @PostMapping("/sms_notifications")
+    public SmsNotification create(@RequestBody SmsNotification notification) throws TemplateNotFoundException {
+        templateRepository.findById(notification.getTemplateId())
+                .orElseThrow(() -> new TemplateNotFoundException(notification.getTemplateId()));
+        return smsRepository.save(notification); }
 
-    @DeleteMapping("/notifications")
-    public ResponseEntity<Notification> deleteTop() {
-        notificationRepository.deleteTop();
+    @DeleteMapping("/sms_notifications")
+    public ResponseEntity<SmsNotification> clearSmsList() {
+        smsRepository.deleteAll();
         return ResponseEntity.ok().build();
     }
 
+    /* Email Notification Requests */
+
+    @GetMapping("/email_notifications")
+    public @ResponseBody List<EmailNotification> getEmailNotifications() {
+        return emailRepository.findAll();
+    }
+
+    @PostMapping("/email_notifications")
+    public Notification create(@RequestBody EmailNotification notification) throws TemplateNotFoundException {
+        templateRepository.findById(notification.getTemplateId())
+                .orElseThrow(() -> new TemplateNotFoundException(notification.getTemplateId()));
+        return emailRepository.save(notification);
+    }
+
+    @DeleteMapping("/email_notifications")
+    public ResponseEntity<EmailNotification> clearEmailList() {
+        emailRepository.deleteAll();
+        return ResponseEntity.ok().build();
+    }
 
 }
