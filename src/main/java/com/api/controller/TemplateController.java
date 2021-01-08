@@ -77,9 +77,11 @@ public class TemplateController {
     @PostMapping("/notifications")
     public Notification create(@RequestBody Notification notification) throws TemplateNotFoundException {
 
-        if (notification.getTemplate() == null)
-            throw new TemplateNotFoundException(0L);
+        Long id = notification.getTemplateId();
+        Template template = templateRepository.findById(id)
+                .orElseThrow(() -> new TemplateNotFoundException(id));
 
+        notification.setTemplate(template);
         notification.prepareContent();
         return notificationRepository.save(notification);
     }

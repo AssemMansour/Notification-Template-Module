@@ -20,7 +20,6 @@ public class Template {
     private Long id;
 
     private String content;
-
     private int numberOfUnknowns;
 
     @Enumerated(EnumType.ORDINAL)
@@ -28,10 +27,6 @@ public class Template {
 
     @Enumerated(EnumType.ORDINAL)
     private Language language;
-
-    @OneToMany(mappedBy = "id")
-    @JsonIgnore
-    private Set<Notification> notifications;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
