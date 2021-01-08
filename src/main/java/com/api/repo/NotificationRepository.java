@@ -14,9 +14,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Modifying
     @Query(nativeQuery = true, value = "DELETE FROM notification LIMIT 1")
     @Transactional
-    void deleteTop();
+    public void deleteTop();
 
-    @Query(nativeQuery = true, value = "SELECT * FROM notification WHERE status = \"TO_BE_SENT\" LIMIT 1")
-    Notification getNext();
+    @Query(value = "SELECT *, 0 AS clazz_ FROM notification LIMIT 1", nativeQuery = true)
+    public Notification getNext();
 
 }

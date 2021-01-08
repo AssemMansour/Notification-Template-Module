@@ -3,8 +3,10 @@ package com.api.model;
 import com.api.enums.NotificationType;
 import com.api.enums.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +14,9 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Notification {
 
+
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
@@ -23,16 +27,24 @@ public class Notification {
     private String receiver;
     private String content;
 
-    @JsonIgnore
     private String unknowns;
-    @JsonIgnore
     private Long templateId;
 
     @Transient
-    Template template;
+    private Template template;
 
     public Notification(){
         status = Status.TO_BE_SENT;
+    }
+
+    protected Notification(Notification notification) {
+        status = notification.getStatus();
+        sender = notification.getSender();
+        receiver = notification.getReceiver();
+        content = notification.getContent();
+        unknowns = notification.getUnknowns();
+        template = notification.getTemplate();
+        templateId = notification.getTemplateId();
     }
 
     public Long getId() { return id; }
@@ -53,9 +65,12 @@ public class Notification {
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
 
+    @JsonIgnore
     public Long getTemplateId() { return templateId; }
+    @JsonSetter
     public void setTemplateId(Long templateId) { this.templateId = templateId; }
 
+    @JsonIgnore
     public Template getTemplate() { return template; }
     public void setTemplate(Template template) { this.template = template; }
 
@@ -68,6 +83,9 @@ public class Notification {
         String content = template.getContent();
         content = content.replaceAll("\\{.*?\\}", "#PH");
         for (int i = 0; i < template.getNumberOfUnknowns(); i++) {
+
+            if (unknowns.get(i) == null)
+                break;
             content = content.replaceFirst("#PH", unknowns.get(i));
         }
         return content;

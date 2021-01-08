@@ -10,4 +10,8 @@ public class EmailNotification extends Notification {
     public EmailNotification(){
         super();
     }
+
+    public EmailNotification(Notification notification) {
+        super(notification);
+    }
 }

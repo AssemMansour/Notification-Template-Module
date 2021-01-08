@@ -86,7 +86,12 @@ public class TemplateController {
         return notificationRepository.save(notification);
     }
 
-    @PostMapping("/notifications/send?type={type}")
+    @GetMapping("/notifications")
+    public List<Notification> getAllNotifications() {
+        return notificationRepository.findAll();
+    }
+
+    @PostMapping("/notifications/send/{type}")
     public Notification sendNextNotification(@PathVariable(value = "type") NotificationType type) throws NotificationNotFoundException {
 
         Notification notification = notificationRepository.getNext();
@@ -95,9 +100,9 @@ public class TemplateController {
         notificationRepository.delete(notification);
 
         if (type == NotificationType.SMS)
-            return smsRepository.save((SmsNotification) notification);
+            return smsRepository.save(new SmsNotification(notification));
 
-        return emailRepository.save((EmailNotification) notification);
+        return emailRepository.save(new EmailNotification(notification));
     }
 
 

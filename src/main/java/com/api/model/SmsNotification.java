@@ -10,4 +10,8 @@ public class SmsNotification extends Notification {
     public SmsNotification(){
         super();
     }
+
+    public SmsNotification(Notification notification) {
+        super(notification);
+    }
 }
