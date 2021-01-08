@@ -8,11 +8,11 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final String NOTIFICATION_URL = "http://localhost:8080/notifications/";
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        boolean hasColumns = true;
 
         while (true) {
             System.out.println("1) Send Next Notification 2) Exit");
@@ -26,13 +26,17 @@ public class Main {
             choice = scanner.nextInt();
 
             if (choice == 1) {
-                DataUtil.handleSendRequest("", NOTIFICATION_URL + "send?type=" + NotificationType.SMS.name(), "POST");
+                hasColumns = DataUtil.sendNextNotification(NotificationType.SMS);
 
             } else if (choice == 2) {
-                DataUtil.handleSendRequest("", NOTIFICATION_URL + "send?type=" + NotificationType.EMAIL.name(), "POST");
+                hasColumns = DataUtil.sendNextNotification(NotificationType.EMAIL);
 
             } else
                 System.out.println("Invalid input");
+
+
+            if (!hasColumns)
+                System.out.println("All notifications have been sent");
 
         }
 
