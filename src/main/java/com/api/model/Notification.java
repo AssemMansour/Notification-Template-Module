@@ -1,5 +1,6 @@
 package com.api.model;
 
+import com.api.enums.NotificationType;
 import com.api.enums.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -8,7 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity
-public abstract class Notification {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class Notification {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

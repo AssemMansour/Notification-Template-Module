@@ -1,10 +1,12 @@
 package com.api.controller;
 
+import com.api.enums.NotificationType;
 import com.api.enums.Status;
 import com.api.exception.NotificationNotFoundException;
 import com.api.model.EmailNotification;
 import com.api.model.SmsNotification;
 import com.api.repo.EmailRepository;
+import com.api.repo.NotificationRepository;
 import com.api.repo.SmsRepository;
 import com.api.model.Notification;
 import com.api.model.Template;
@@ -22,9 +24,12 @@ public class TemplateController {
     @Autowired
     TemplateRepository templateRepository;
     @Autowired
+    NotificationRepository notificationRepository;
+    @Autowired
     SmsRepository smsRepository;
     @Autowired
     EmailRepository emailRepository;
+
 
     /* Template Requests */
 
@@ -67,26 +72,45 @@ public class TemplateController {
         return ResponseEntity.ok().build();
     }
 
-    /* Sms Notification Requests */
+    /* Notification Requests */
 
-    @GetMapping("/sms_notifications")
-    public @ResponseBody List<SmsNotification> getSmsNotifications() {
-        return smsRepository.findAll();
-    }
-
-    @PostMapping("/sms_notifications")
-    public SmsNotification create(@RequestBody SmsNotification notification) throws TemplateNotFoundException {
+    @PostMapping("/notifications")
+    public Notification create(@RequestBody Notification notification) throws TemplateNotFoundException {
 
         if (notification.getTemplate() == null)
             throw new TemplateNotFoundException(0L);
 
         notification.prepareContent();
-        return smsRepository.save(notification); }
+        return notificationRepository.save(notification);
+    }
 
-    @DeleteMapping("/sms_notifications")
-    public ResponseEntity<SmsNotification> clearSmsList() {
+    @PostMapping("/notifications/send?type={type}")
+    public Notification sendNextNotification(@PathVariable(value = "type") NotificationType type) throws NotificationNotFoundException {
+
+        Notification notification = notificationRepository.getNext();
+        if (notification == null) throw new NotificationNotFoundException(0L);
+
+        notificationRepository.delete(notification);
+
+        if (type == NotificationType.SMS)
+            return smsRepository.save((SmsNotification) notification);
+
+        return emailRepository.save((EmailNotification) notification);
+    }
+
+
+    @DeleteMapping("/notifications")
+    public ResponseEntity<Notification> clearNotificationList() {
         smsRepository.deleteAll();
+        emailRepository.deleteAll();
         return ResponseEntity.ok().build();
+    }
+
+    /* Sms Notification Requests */
+
+    @GetMapping("/sms_notifications")
+    public @ResponseBody List<SmsNotification> getSmsNotifications() {
+        return smsRepository.findAll();
     }
 
     @PutMapping("/sms_notifications/{id}/{status}")
@@ -98,7 +122,6 @@ public class TemplateController {
 
         if (status != null)
             notification.setStatus(status);
-
         return smsRepository.save(notification);
     }
 
@@ -107,22 +130,6 @@ public class TemplateController {
     @GetMapping("/email_notifications")
     public @ResponseBody List<EmailNotification> getEmailNotifications() {
         return emailRepository.findAll();
-    }
-
-    @PostMapping("/email_notifications")
-    public Notification create(@RequestBody EmailNotification notification)
-            throws TemplateNotFoundException {
-        if (notification.getTemplate() == null)
-            throw new TemplateNotFoundException(0L);
-
-        notification.prepareContent();
-        return emailRepository.save(notification);
-    }
-
-    @DeleteMapping("/email_notifications")
-    public ResponseEntity<EmailNotification> clearEmailList() {
-        emailRepository.deleteAll();
-        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/email_notifications/{id}/{status}")

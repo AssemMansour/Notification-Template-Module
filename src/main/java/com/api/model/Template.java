@@ -48,5 +48,4 @@ public class Template {
     public Language getLanguage() { return language; }
     public void setLanguage(Language language) { this.language = language; }
 
-
 }
