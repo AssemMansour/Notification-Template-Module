@@ -1,10 +1,7 @@
-package com.api.util;
-
-import org.json.JSONObject;
+package com.client.util;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +29,7 @@ public class DataUtil {
         return "";
     }
 
-    static void handleWriteRequest(String request, String urlString, String requestMethod) {
+    public static void handleSendRequest(String request, String urlString, String requestMethod) {
         try {
             URL url = new URL(urlString);
 

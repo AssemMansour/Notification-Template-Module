@@ -1,7 +1,5 @@
 package com.api.model;
 
-import com.api.enums.Status;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
